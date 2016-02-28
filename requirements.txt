@@ -1,0 +1,2 @@
+Markdown==2.6.5
+pyzmail==1.0.3
