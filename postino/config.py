@@ -1,17 +1,22 @@
-import json
 import os.path
-
+from ConfigParser import RawConfigParser
 
 # paths to default configuration files
 DEFAULT_CONFIG_PATHS = [
     # current directory
-    'postino.json',
+    'postino.ini',
     # home directory
-    os.path.expanduser('~/.postino.json'),
+    os.path.expanduser('~/.postino.ini'),
     # /etc directory
-    '/etc/postino.json',
+    '/etc/postino.ini',
 ]
 
+DEFAULTS = {
+    'name': 'Postino',
+    'to': None,
+    'mode': 'normal',
+    'port': 25,
+}
 
 class Config(object):
     def __init__(self, server, port,
@@ -19,23 +24,23 @@ class Config(object):
                  name=None,
                  mode=None, to=None):
         self.server = server
-        self.port = port or 25
+        self.port = port
         self.user = user
         self.password = password
-        self.mode = mode or 'normal'
+        self.mode = mode
         self.to = to
-        self.name = name or 'Postino'
+        self.name = name
 
     @classmethod
     def load(cls, filename):
-        with open(filename, 'r', encoding='utf-8') as fileobj:
-            cfg = json.loads(fileobj.read())
+        cfg = RawConfigParser(defaults=DEFAULTS)
+        cfg.read(filename)
 
-        return cls(cfg['server'], cfg['port'],
-                   cfg['user'], cfg['password'],
-                   cfg.get('name'),
-                   cfg.get('mode'),
-                   cfg.get('to'))
+        return cls(
+            cfg.get('postino', 'server'), cfg.getint('postino', 'port'),
+            cfg.get('postino', 'user'), cfg.get('postino', 'password'),
+            cfg.get('postino', 'name'), cfg.get('postino', 'mode'),
+            cfg.get('postino', 'to'))
 
     @classmethod
     def load_any(cls, filenames):
