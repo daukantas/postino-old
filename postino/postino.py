@@ -13,6 +13,15 @@ class PostinoError(Exception):
     pass
 
 
+def process_addresses(addr):
+    if not addr:
+        return []
+    elif isinstance(addr, basestring):
+        return [addr]
+    else:
+        return addr
+
+
 def postino(text=None, html=None,
         subject=None,
         to=None, cc=None,
@@ -30,13 +39,13 @@ def postino(text=None, html=None,
     if not cfg:
         raise PostinoError('No valid configuration found')
 
-    to = to or cfg.to
+    to = process_addresses(to or cfg.to)
     if not to:
         raise PostinoError('No recipient specified')
 
     # all looks OK, create and send the email
     payload, mail_from, rcpt_to, msg_id = compose_mail(
-            (cfg.name, cfg.user),
+            (cfg.name, cfg.login),
             to,
             subject,
             'utf-8',
@@ -48,7 +57,7 @@ def postino(text=None, html=None,
                     cfg.server,
                     smtp_port=cfg.port,
                     smtp_mode=cfg.mode,
-                    smtp_login=cfg.user,
+                    smtp_login=cfg.login,
                     smtp_password=cfg.password)
 
     if ret:

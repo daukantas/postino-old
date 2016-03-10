@@ -20,12 +20,12 @@ DEFAULTS = {
 
 class Config(object):
     def __init__(self, server, port,
-                 user, password,
+                 login, password,
                  name=None,
                  mode=None, to=None):
         self.server = server
         self.port = port
-        self.user = user
+        self.login = login
         self.password = password
         self.mode = mode
         self.to = to
@@ -38,7 +38,7 @@ class Config(object):
 
         return cls(
             cfg.get('postino', 'server'), cfg.getint('postino', 'port'),
-            cfg.get('postino', 'user'), cfg.get('postino', 'password'),
+            cfg.get('postino', 'login'), cfg.get('postino', 'password'),
             cfg.get('postino', 'name'), cfg.get('postino', 'mode'),
             cfg.get('postino', 'to'))
 
