@@ -24,7 +24,7 @@ def process_addresses(addr):
 
 def postino(text=None, html=None,
         subject=None,
-        to=None, cc=None,
+        to=None, cc=None, bcc=None,
         cfg=None):
 
     if not subject:
@@ -43,6 +43,9 @@ def postino(text=None, html=None,
     if not to:
         raise PostinoError('No recipient specified')
 
+    cc = process_addresses(cc or cfg.cc)
+    bcc = process_addresses(bcc or cfg.bcc)
+
     def encode_text(text, encoding='utf-8'):
         if text is None:
             return None
@@ -52,8 +55,9 @@ def postino(text=None, html=None,
     payload, mail_from, rcpt_to, msg_id = compose_mail(
             (cfg.name, cfg.login),
             to,
-            subject.replace('\n', ' ').strip(),
-            'utf-8',
+            cc=cc, bcc=bcc,
+            subject=subject.replace('\n', ' ').strip(),
+            default_charset='utf-8',
             text=encode_text(text),
             html=encode_text(html or text))
 
@@ -70,7 +74,7 @@ def postino(text=None, html=None,
 
 
 def postino_markdown(text, subject=None,
-        to=None, cc=None,
+        to=None, cc=None, bcc=None,
         cfg=None):
 
     html = markdown(text)
@@ -85,6 +89,8 @@ def main():
     parser.add_argument('to', type=str, nargs='*')
     parser.add_argument('--markdown', '-m', action='store_true')
     parser.add_argument('--subject', '-s')
+    parser.add_argument('--cc', type=str, action='append')
+    parser.add_argument('--bcc', type=str, action='append')
 
     args = parser.parse_args()
 
@@ -105,11 +111,15 @@ def main():
         if args.markdown:
             postino_markdown(subject=subject,
                     text=body,
-                    to=args.to)
+                    to=args.to,
+                    cc=args.cc,
+                    bcc=args.bcc)
         else:
             postino(subject=subject,
                     text=body,
-                    to=args.to)
+                    to=args.to,
+                    cc=args.cc,
+                    bcc=args.bcc)
     except PostinoError as e:
         raise SystemExit(e)
 

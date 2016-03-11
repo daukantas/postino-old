@@ -14,6 +14,8 @@ DEFAULT_CONFIG_PATHS = [
 DEFAULTS = {
     'name': 'Postino',
     'to': None,
+    'cc': None,
+    'bcc': None,
     'mode': 'normal',
     'port': 25,
 }
@@ -22,13 +24,16 @@ class Config(object):
     def __init__(self, server, port,
                  login, password,
                  name=None,
-                 mode=None, to=None):
+                 mode=None, to=None,
+                 cc=None, bcc=None):
         self.server = server
         self.port = port
         self.login = login
         self.password = password
         self.mode = mode
         self.to = to
+        self.cc = cc
+        self.bcc = bcc
         self.name = name
 
     @classmethod
@@ -40,7 +45,8 @@ class Config(object):
             cfg.get('postino', 'server'), cfg.getint('postino', 'port'),
             cfg.get('postino', 'login'), cfg.get('postino', 'password'),
             cfg.get('postino', 'name'), cfg.get('postino', 'mode'),
-            cfg.get('postino', 'to'))
+            cfg.get('postino', 'to'), cfg.get('postino', 'cc'),
+            cfg.get('postino', 'bcc'))
 
     @classmethod
     def load_any(cls, filenames):
