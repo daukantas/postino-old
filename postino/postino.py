@@ -43,14 +43,19 @@ def postino(text=None, html=None,
     if not to:
         raise PostinoError('No recipient specified')
 
+    def encode_text(text, encoding='utf-8'):
+        if text is None:
+            return None
+        return (text.encode(encoding), encoding)
+
     # all looks OK, create and send the email
     payload, mail_from, rcpt_to, msg_id = compose_mail(
             (cfg.name, cfg.login),
             to,
-            subject,
+            subject.replace('\n', ' ').strip(),
             'utf-8',
-            (text.encode('utf-8'), 'utf-8'),
-            html=(html.encode('utf-8'), 'utf-8'))
+            text=encode_text(text),
+            html=encode_text(html or text))
 
     ret = send_mail(payload,
                     mail_from, rcpt_to,
