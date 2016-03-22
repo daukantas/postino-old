@@ -7,6 +7,7 @@ from markdown import markdown
 from pyzmail import compose_mail, send_mail
 
 import config
+from address import Address
 
 
 class PostinoError(Exception):
@@ -14,12 +15,22 @@ class PostinoError(Exception):
 
 
 def process_addresses(addr):
+    def addressify(obj):
+        if isinstance(obj, Address):
+            return obj
+        else:
+            return Address(addr)
+
     if not addr:
         return []
-    elif isinstance(addr, basestring):
-        return [addr]
+
+    if hasattr(addr, '__iter__') and not isinstance(addr, basestring):
+        # iterable, but not a string
+        addr_list = addr
     else:
-        return addr
+        addr_list = [addr]
+
+    return [addressify(a).to_pyzmail() for a in addr]
 
 
 def postino(text=None, html=None,
@@ -86,11 +97,11 @@ def postino_markdown(text, subject=None,
 
 def main():
     parser = argparse.ArgumentParser('Send emails.')
-    parser.add_argument('to', type=str, nargs='*')
+    parser.add_argument('to', type=Address, nargs='*')
     parser.add_argument('--markdown', '-m', action='store_true')
     parser.add_argument('--subject', '-s')
-    parser.add_argument('--cc', type=str, action='append')
-    parser.add_argument('--bcc', type=str, action='append')
+    parser.add_argument('--cc', type=Address, action='append')
+    parser.add_argument('--bcc', type=Address, action='append')
 
     args = parser.parse_args()
 
