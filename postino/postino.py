@@ -37,14 +37,18 @@ def postino(text=None, html=None,
         to=None, cc=None, bcc=None,
         cfg=None):
 
-    if not subject:
-        raise PostinoError('No subject')
-
-    if not text and not html:
-        raise PostinoError('No body specified')
-
     if not cfg:
         cfg = config.Config.load_default()
+
+    if subject is None:
+        # subject not specified explicitly, use the one from the config
+        subject = cfg.subject
+
+    if subject is None:
+        raise PostinoError('No subject')
+
+    if text is None and html is None:
+        raise PostinoError('No body specified')
 
     if not cfg:
         raise PostinoError('No valid configuration found')
@@ -99,6 +103,7 @@ def main():
     parser.add_argument('to', type=Address, nargs='*')
     parser.add_argument('--markdown', '-m', action='store_true')
     parser.add_argument('--subject', '-s')
+    parser.add_argument('--subject-inline', '-S', action='store_true')
     parser.add_argument('--cc', type=Address, action='append')
     parser.add_argument('--bcc', type=Address, action='append')
     parser.add_argument('--input', '-i', default='-', type=argparse.FileType('r'))
@@ -107,16 +112,16 @@ def main():
 
     text = [s.decode('utf-8') for s in args.input.readlines()]
 
-    if args.subject:
-        # subject on command line
-        subject = args.subject
-        body = '\n'.join(text)
-    else:
+    if args.subject_inline:
         # subject in first line
+        if not text:
+            raise PostinoError('Inline subject expected, but input is empty')
         subject = text[0]
         body = '\n'.join(text[1:])
-
-    body = body.strip()
+    else:
+        # subject on command line or left out
+        subject = args.subject
+        body = '\n'.join(text)
 
     try:
         if args.markdown:

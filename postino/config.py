@@ -18,6 +18,7 @@ DEFAULTS = {
     'bcc': None,
     'mode': 'normal',
     'port': 25,
+    'subject': 'Postino',
 }
 
 class Config(object):
@@ -25,7 +26,8 @@ class Config(object):
                  login, password,
                  name=None,
                  mode=None, to=None,
-                 cc=None, bcc=None):
+                 cc=None, bcc=None,
+                 subject=None):
         self.server = server
         self.port = port
         self.login = login
@@ -35,6 +37,7 @@ class Config(object):
         self.cc = cc
         self.bcc = bcc
         self.name = name
+        self.subject = subject
 
     @classmethod
     def load(cls, filename):
@@ -46,7 +49,7 @@ class Config(object):
             cfg.get('postino', 'login'), cfg.get('postino', 'password'),
             cfg.get('postino', 'name'), cfg.get('postino', 'mode'),
             cfg.get('postino', 'to'), cfg.get('postino', 'cc'),
-            cfg.get('postino', 'bcc'))
+            cfg.get('postino', 'bcc'), cfg.get('postino', 'subject'))
 
     @classmethod
     def load_any(cls, filenames):
