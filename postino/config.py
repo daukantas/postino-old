@@ -12,13 +12,13 @@ DEFAULT_CONFIG_PATHS = [
 ]
 
 DEFAULTS = {
-    'name': 'Postino',
+    'name': u'Postino',
     'to': None,
     'cc': None,
     'bcc': None,
     'mode': 'normal',
     'port': 25,
-    'subject': 'Postino',
+    'subject': u'Postino',
 }
 
 class Config(object):
