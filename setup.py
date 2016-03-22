@@ -14,4 +14,5 @@ setup(
         'markdown',
         'pyzmail',
     ],
+    scripts=['bin/postino'],
     zip_safe=False)
