@@ -1,6 +1,8 @@
 import os.path
 from ConfigParser import RawConfigParser
 
+from address import Address
+
 # paths to default configuration files
 DEFAULT_CONFIG_PATHS = [
     # current directory
@@ -12,7 +14,7 @@ DEFAULT_CONFIG_PATHS = [
 ]
 
 DEFAULTS = {
-    'name': u'Postino',
+    'sender': u'Postino <postino@postino.com>',
     'to': None,
     'cc': None,
     'bcc': None,
@@ -24,7 +26,7 @@ DEFAULTS = {
 class Config(object):
     def __init__(self, server, port,
                  login, password,
-                 name=None,
+                 sender=None,
                  mode=None, to=None,
                  cc=None, bcc=None,
                  subject=None):
@@ -33,10 +35,10 @@ class Config(object):
         self.login = login
         self.password = password
         self.mode = mode
-        self.to = to
-        self.cc = cc
-        self.bcc = bcc
-        self.name = name
+        self.to = Address(to) if to else None
+        self.cc = Address(cc) if cc else None
+        self.bcc = Address(bcc) if bcc else None
+        self.sender = Address(sender)
         self.subject = subject
 
     @classmethod
@@ -47,7 +49,7 @@ class Config(object):
         return cls(
             cfg.get('postino', 'server'), cfg.getint('postino', 'port'),
             cfg.get('postino', 'login'), cfg.get('postino', 'password'),
-            cfg.get('postino', 'name'), cfg.get('postino', 'mode'),
+            cfg.get('postino', 'sender'), cfg.get('postino', 'mode'),
             cfg.get('postino', 'to'), cfg.get('postino', 'cc'),
             cfg.get('postino', 'bcc'), cfg.get('postino', 'subject'))
 

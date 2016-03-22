@@ -50,7 +50,7 @@ def postino_raw(text=None, html=None,
 
     # all looks OK, create and send the email
     payload, mail_from, rcpt_to, msg_id = compose_mail(
-            (cfg.name, cfg.login),
+            convert_address(cfg.sender),
             convert_addresses(to),
             cc=convert_addresses(cc),
             bcc=convert_addresses(bcc),
@@ -87,7 +87,7 @@ def process_addresses(addr):
     else:
         addr_list = [addr]
 
-    return [addressify(a) for a in addr]
+    return [addressify(a) for a in addr_list]
 
 
 def postino(text=None, html=None,
