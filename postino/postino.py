@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import argparse
-import sys
 
 from markdown import markdown
 from pyzmail import compose_mail, send_mail
@@ -102,10 +101,11 @@ def main():
     parser.add_argument('--subject', '-s')
     parser.add_argument('--cc', type=Address, action='append')
     parser.add_argument('--bcc', type=Address, action='append')
+    parser.add_argument('--input', '-i', default='-', type=argparse.FileType('r'))
 
     args = parser.parse_args()
 
-    text = [s.decode('utf-8') for s in sys.stdin.readlines()]
+    text = [s.decode('utf-8') for s in args.input.readlines()]
 
     if args.subject:
         # subject on command line
