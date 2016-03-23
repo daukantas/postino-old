@@ -5,14 +5,29 @@ import argparse
 from postino import Address, postino, postino_markdown, PostinoError
 
 def main():
-    parser = argparse.ArgumentParser('Send emails.')
-    parser.add_argument('to', type=Address, nargs='*')
-    parser.add_argument('--markdown', '-m', action='store_true')
-    parser.add_argument('--subject', '-s')
-    parser.add_argument('--subject-inline', '-S', action='store_true')
-    parser.add_argument('--cc', type=Address, action='append')
-    parser.add_argument('--bcc', type=Address, action='append')
-    parser.add_argument('--input', '-i', default='-', type=argparse.FileType('r'))
+    parser = argparse.ArgumentParser('Send emails..')
+    parser.add_argument('to', type=Address, nargs='*',
+            help='set recipient address')
+    parser.add_argument('--markdown', '-m',
+            action='store_true',
+            help='treat input as markdown and convert it to html')
+    parser.add_argument('--subject', '-s',
+            help='set subject (ignored if --subject-inline is used)')
+    parser.add_argument('--subject-inline', '-S',
+            action='store_true',
+            help='set subject to first line of input')
+    parser.add_argument('--cc',
+            type=Address,
+            action='append',
+            help='add CC recipient')
+    parser.add_argument('--bcc',
+            type=Address,
+            action='append',
+            help='add BCC recipient')
+    parser.add_argument('--input', '-i',
+            default='-',
+            type=argparse.FileType('r'),
+            help='specify input file')
 
     args = parser.parse_args()
 
