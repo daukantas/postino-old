@@ -28,6 +28,9 @@ def main():
             default='-',
             type=argparse.FileType('r'),
             help='specify input file')
+    parser.add_argument('--allow-empty', '-e',
+            action='store_true',
+            help='allow empty body')
 
     args = parser.parse_args()
 
@@ -43,6 +46,9 @@ def main():
         # subject on command line or left out
         subject = args.subject
         body = u'\n'.join(text)
+
+    if not body and not args.allow_empty:
+        raise PostinoError('Body is empty')
 
     if args.markdown:
         postino_markdown(subject=subject,
