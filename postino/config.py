@@ -1,7 +1,11 @@
 import os.path
-from ConfigParser import RawConfigParser
 
-from address import Address
+try:
+    from ConfigParser import RawConfigParser
+except ImportError:
+    from configparser import RawConfigParser
+
+from .address import Address
 
 # paths to default configuration files
 DEFAULT_CONFIG_PATHS = [

@@ -4,8 +4,9 @@
 from markdown import markdown
 from pyzmail import compose_mail, send_mail
 
-import config
-from address import Address
+from . import config
+from . import compat
+from .address import Address
 
 
 class PostinoError(Exception):
@@ -26,10 +27,10 @@ def postino_raw(text=None, html=None,
     if text is None and html is None:
         raise PostinoError('No body specified')
 
-    if not isinstance(subject, unicode):
+    if not compat.isunicode(subject):
         raise PostinoError('Subject must be a unicode string')
 
-    if not (isinstance(text, unicode) or isinstance(html, unicode)):
+    if not (compat.isunicode(text) or compat.isunicode(html)):
         raise PostinoError('Body must be a unicode string')
 
     if not to:
@@ -80,7 +81,7 @@ def process_addresses(addr):
     if not addr:
         return []
 
-    if hasattr(addr, '__iter__') and not isinstance(addr, basestring):
+    if hasattr(addr, '__iter__') and not compat.isbasestring(addr):
         # iterable, but not a string
         addr_list = addr
     else:

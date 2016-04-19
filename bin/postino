@@ -1,33 +1,37 @@
 #!/usr/bin/env python
 
 import argparse
-import sys
+import locale
 
-from postino import Address, postino, postino_markdown, PostinoError
+from postino import Address, postino, postino_markdown, PostinoError, compat
+
+def address_wrapper(addr):
+    return Address(compat.unicodearg(addr))
 
 def main():
     parser = argparse.ArgumentParser('Send emails..')
-    parser.add_argument('to', type=Address, nargs='*',
+    parser.add_argument('to', type=address_wrapper, nargs='*',
             help='set recipient address')
     parser.add_argument('--markdown', '-m',
             action='store_true',
             help='treat input as markdown and convert it to html')
     parser.add_argument('--subject', '-s',
+            type=compat.unicodearg,
             help='set subject (ignored if --subject-inline is used)')
     parser.add_argument('--subject-inline', '-S',
             action='store_true',
             help='set subject to first line of input')
     parser.add_argument('--cc',
-            type=Address,
+            type=address_wrapper,
             action='append',
             help='add CC recipient')
     parser.add_argument('--bcc',
-            type=Address,
+            type=address_wrapper,
             action='append',
             help='add BCC recipient')
     parser.add_argument('--input', '-i',
             default='-',
-            type=argparse.FileType('r'),
+            type=compat.unicodearg,
             help='specify input file')
     parser.add_argument('--allow-empty', '-e',
             action='store_true',
@@ -35,7 +39,7 @@ def main():
 
     args = parser.parse_args()
 
-    text = [s.decode('utf-8') for s in args.input.readlines()]
+    text = compat.load_file(args.input, locale.getpreferredencoding()).splitlines()
 
     if args.subject_inline:
         # subject in first line
@@ -45,7 +49,7 @@ def main():
         body = u'\n'.join(text[1:])
     else:
         # subject on command line or left out
-        subject = args.subject.decode(sys.stdin.encoding)
+        subject = args.subject
         body = u'\n'.join(text)
 
     if not body and not args.allow_empty:

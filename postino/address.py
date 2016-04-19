@@ -1,11 +1,13 @@
 import re
 import email.utils
 
+from .compat import unicodify
+
 ADDRESS_REGEX = re.compile(r"^([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)$")
 
 class Address(object):
     def __init__(self, address):
-        self.name, self.address = email.utils.parseaddr(address)
+        self.name, self.address = email.utils.parseaddr(unicodify(address))
 
     @property
     def address(self):
